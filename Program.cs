@@ -65,7 +65,28 @@ static int ConvertZipToCbz(string sourcePath)
 
     // Move other images out to root
     var imagesPath = Path.Combine(filesDir, "images");
-    foreach (var imagePath in Directory.GetFiles(imagesPath))
+    string[] imagesDir;
+
+    if (Directory.Exists(imagesPath))
+    {
+        imagesDir = Directory.GetFiles(imagesPath);
+    }
+    else
+    {
+        imagesPath = Path.Combine(filesDir, "OPS");
+        imagesPath = Path.Combine(imagesPath, "images");
+        if (Directory.Exists(imagesPath))
+        {
+            imagesDir = Directory.GetFiles(imagesPath);
+        }
+        else
+        {
+            Console.WriteLine("Could not find images directory - zip file does not match expected structure.");
+            return 1;
+        }
+    }
+
+    foreach (var imagePath in imagesDir)
     {
         var imageName = Path.GetFileName(imagePath);
         File.Move(imagePath, Path.Combine(extractPath, imageName));
